@@ -1,0 +1,53 @@
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+import numpy as np
+from selenium import webdriver
+import time
+from collections import OrderedDict
+
+
+user_link = input("URL: ")
+
+# start web browser
+browser=webdriver.Chrome()
+
+# get source code
+browser.get(user_link)
+html = browser.page_source
+time.sleep(5)
+print(html)
+
+# close web browser
+browser.close()
+
+
+#url = "https://www.typingclub.com/sportal/program-3.game"
+#content = requests.get(url).content 
+soup = BeautifulSoup(html, "html.parser")
+
+
+
+#get all classes names from html
+classes = [value
+           for element in soup.find_all(class_=True)
+           for value in element["class"]]
+
+
+#remove all redundant classes
+print(len(classes))
+classes_nd= set(classes)
+classes= list(classes_nd)
+print(len(classes_nd))
+
+
+
+#get all text for each class name
+classes_list=[]
+for i in range(len(classes)):
+    class_data = [x.get_text() for x in soup.find_all(class_=classes[i])]
+    class_data = list(map(lambda x:x.replace("\n",""),class_data)) #remove all (newline)
+    class_data = list(map(lambda x:x.replace("  ",""),class_data)) #remove all (white spaces)
+    classes_list.append(class_data)
+
+
